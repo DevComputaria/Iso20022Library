@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Iso20022Library.Domain\Iso20022Library.Domain.csproj" />
+    <ProjectReference Include="..\Iso20022Library.Infrastructure\Iso20022Library.Infrastructure.csproj" />
+    <ProjectReference Include="..\Iso20022Library.Messages\Iso20022Library.Messages.csproj" />
+  </ItemGroup>
+
+</Project>
