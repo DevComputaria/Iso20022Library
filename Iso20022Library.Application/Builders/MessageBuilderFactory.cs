@@ -4,24 +4,50 @@ using Iso20022Library.Domain.Common.Interfaces;
 namespace Iso20022Library.Application.Builders;
 
 /// <summary>
-/// Fábrica responsável por fornecer o builder apropriado para cada tipo de mensagem ISO 20022.
+/// Factory responsible for providing the appropriate builder for each ISO 20022 message type.
 /// </summary>
+/// <remarks>
+/// This factory implements the Factory Method pattern to create message builders
+/// without exposing the instantiation logic to clients. The factory maintains a registry
+/// of supported message types and their corresponding builder implementations.
+/// 
+/// To add support for a new message type:
+/// 1. Create a new builder class implementing <see cref="IMessageBuilder"/>
+/// 2. Register the builder in the <see cref="_builders"/> dictionary
+/// </remarks>
 public class MessageBuilderFactory
 {
     /// <summary>
-    /// Dicionário interno de builders registrados por tipo de mensagem.
+    /// Internal dictionary of registered builders indexed by message type.
     /// </summary>
+    /// <remarks>
+    /// This dictionary acts as a registry for all supported message types and their
+    /// corresponding builder instances. Each builder must implement the <see cref="IMessageBuilder"/> interface.
+    /// The dictionary is initialized with all supported message types at construction time.
+    /// </remarks>
     private readonly Dictionary<MessageType, IMessageBuilder> _builders = new()
     {
         { MessageType.Pain00100103, new Pain00100102Builder() }
     };
 
     /// <summary>
-    /// Retorna o builder correspondente ao tipo de mensagem especificado.
+    /// Returns the builder corresponding to the specified message type.
     /// </summary>
-    /// <param name="type">Tipo da mensagem ISO 20022.</param>
-    /// <returns>Instância de <see cref="IMessageBuilder"/> correspondente ao tipo solicitado.</returns>
-    /// <exception cref="NotSupportedException">Lançada quando não há builder registrado para o tipo fornecido.</exception>
+    /// <param name="type">The ISO 20022 message type identifier.</param>
+    /// <returns>An instance of <see cref="IMessageBuilder"/> corresponding to the requested type.</returns>
+    /// <exception cref="NotSupportedException">Thrown when there is no registered builder for the provided message type.</exception>
+    /// <remarks>
+    /// This method implements the factory method pattern by returning the appropriate builder
+    /// based on the message type. It performs a lookup in the internal registry and throws
+    /// an exception when the requested message type is not supported.
+    /// 
+    /// Usage example:
+    /// <code>
+    /// var factory = new MessageBuilderFactory();
+    /// var builder = factory.GetBuilder(MessageType.Pain00100103);
+    /// var message = builder.BuildXml(documentObject);
+    /// </code>
+    /// </remarks>
     public IMessageBuilder GetBuilder(MessageType type)
     {
         if (_builders.TryGetValue(type, out var builder))

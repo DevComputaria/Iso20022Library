@@ -8,15 +8,44 @@ using System.Xml;
 
 namespace Iso20022Library.Application.Validators
 {
+    /// <summary>
+    /// Provides validation capabilities for XML documents against XSD schemas.
+    /// </summary>
+    /// <remarks>
+    /// This validator supports validating XML strings against XML Schema Definition (XSD) files
+    /// to ensure they conform to the specified structure and constraints defined in the ISO 20022 standard.
+    /// It captures all validation errors during the process and returns them as a formatted string.
+    /// </remarks>
     public class XmlValidator
     {
         /// <summary>
-        /// Valida um XML string contra um schema XSD.
+        /// Validates an XML string against an XSD schema.
         /// </summary>
-        /// <param name="xml">Conteúdo XML em string.</param>
-        /// <param name="xsdPath">Caminho do arquivo XSD.</param>
-        /// <param name="validationErrors">Saída com mensagens de erro, se houver.</param>
-        /// <returns>True se o XML for válido; caso contrário, false.</returns>
+        /// <param name="xml">The XML content as a string.</param>
+        /// <param name="xsdPath">The file path to the XSD schema.</param>
+        /// <param name="validationErrors">When this method returns, contains the validation error messages if validation fails; otherwise, an empty string.</param>
+        /// <returns><c>true</c> if the XML is valid according to the schema; otherwise, <c>false</c>.</returns>
+        /// <remarks>
+        /// This method loads the XSD schema and validates the provided XML content against it.
+        /// Any validation errors are captured and returned through the <paramref name="validationErrors"/> parameter.
+        /// </remarks>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the XSD schema file cannot be found.</exception>
+        /// <exception cref="XmlSchemaException">Thrown if there is an error in the XSD schema.</exception>
+        /// <example>
+        /// <code>
+        /// string xml = "&lt;root&gt;&lt;child&gt;value&lt;/child&gt;&lt;/root&gt;";
+        /// string xsdPath = "schema.xsd";
+        /// 
+        /// if (XmlValidator.Validate(xml, xsdPath, out string errors))
+        /// {
+        ///     Console.WriteLine("XML is valid");
+        /// }
+        /// else
+        /// {
+        ///     Console.WriteLine($"XML validation failed: {errors}");
+        /// }
+        /// </code>
+        /// </example>
         public static bool Validate(string xml, string xsdPath, out string validationErrors)
         {
             var schemaSet = new XmlSchemaSet();
