@@ -1,0 +1,38 @@
+{
+    "github.copilot.editor.enableCodeActions": true,
+    // "github.copilot.editor.enableAutoCompletions": true, // This setting is deprecated
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "file": "./docs/code-style.md"
+        },
+        {
+            "file": "./docs/architecture.md"
+        }
+    ],
+    "github.copilot.chat.testGeneration.instructions": [
+        {
+            "file": "./docs/testing.md"
+        }
+    ],
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+        {
+            "text": "Be extremely detailed with the file changes and reason for the change"
+        }
+    ],
+    "github.copilot.chat.enablePromptFiles": true,
+    "github.copilot.chat.promptFilesLocations": [".prompt"],
+    "github.copilot.chat.promptFiles": true,
+    "github.copilot.advanced": {
+        "codeGeneration": {
+            "csharp": {
+                "instructions": "Follow the coding style guidelines in docs/code-style.md. Use SOLID principles, implement clean architecture and appropriate design patterns."
+            }
+        },
+        "commitMessageGeneration": {
+            "instructions": "Be extremelly detailed with the file changes and the reason for change. Use conventional commit format."
+        }
+    },
+    "files.associations": {
+        "*.prompt": "markdown"
+    }
+}
