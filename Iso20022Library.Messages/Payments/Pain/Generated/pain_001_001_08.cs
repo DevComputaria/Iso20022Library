@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+namespace Iso20022Library.Messages.Payments.Pain.Generated;
+
 using System.Xml.Serialization;
 
 // 
