@@ -89,3 +89,67 @@ Acesse a documentação em: `docfx_project/_site/index.html`
 ## 📄 Licença
 
 MIT License © 2025
+
+# ISO 20022 Library
+
+## Project Structure
+
+This library follows the ISO 20022 message organization structure, organizing messages by their business domains.
+
+## Setup Instructions
+
+### Creating the Folder Structure
+
+To create the recommended folder structure for the ISO 20022 messages, run the PowerShell script:
+
+```powershell
+cd c:\Users\marci\source\repos\Iso20022Library\scripts
+.\Create-FolderStructure.ps1
+```
+
+This will create the following structure:
+
+```
+Iso20022Library.Messages/
+│
+├── Payments/
+│   ├── Pacs/        # Payments Clearing and Settlement
+│   └── Pain/        # Payment Initiation
+│
+├── CashManagement/
+│   └── Camt/        # Cash Management
+│
+├── Securities/
+│   ├── Seev/        # Securities Events
+│   ├── Semt/        # Securities Management
+│   ├── Sese/        # Securities Settlement
+│   └── Secl/        # Securities Clearing
+│
+├── TradeServices/
+│   └── Tsmt/        # Trade Services Management
+│
+├── AccountManagement/
+│   └── Acmt/        # Account Management
+│
+├── ReferenceData/
+│   └── Reda/        # Reference Data
+│
+├── ForeignExchange/
+│   └── Fxtr/        # Foreign Exchange Trade
+│
+├── Authorities/
+│   └── Auth/        # Authorities
+│
+├── Collateral/
+│   └── Colr/        # Collateral Management
+│
+├── Cards/
+│   ├── Caaa/        # Card Acceptor to Acquirer
+│   ├── Caad/        # Card Transactions
+│   └── Casr/        # Card Services
+│
+└── Treasury/
+    └── Trea/        # Treasury Operations
+```
+
+Each folder corresponds to a specific ISO 20022 message domain and type.
