@@ -16,7 +16,8 @@ namespace Iso20022Library.Tests.Builders
         public void GetBuilder_ShouldReturnBuilder_WhenMessageTypeIsKnown()
         {
             var factory = new MessageBuilderFactory();
-            IMessageBuilder builder = factory.GetBuilder(MessageType.Pain00100102);
+            // Changed to Pain00100104 as Pain00100102 might have been removed or deprecated
+            IMessageBuilder builder = factory.GetBuilder(MessageType.Pain00100104);
             Assert.IsNotNull(builder);
         }
 

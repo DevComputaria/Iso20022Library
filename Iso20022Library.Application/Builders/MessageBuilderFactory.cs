@@ -1,3 +1,4 @@
+using Iso20022Library.Application.Builders.Pain;
 using Iso20022Library.Domain.Common.Enums;
 using Iso20022Library.Domain.Common.Interfaces;
 
@@ -27,7 +28,7 @@ public class MessageBuilderFactory
     /// </remarks>
     private readonly Dictionary<MessageType, IMessageBuilder> _builders = new()
     {
-        { MessageType.Pain00100103, new Pain00100102Builder() }
+        { MessageType.Pain00100104, new Pain00100104Builder() }
     };
 
     /// <summary>

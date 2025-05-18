@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Pain00100102\Generated\" />
+    <Folder Include="Payments\Pacs\" />
+  </ItemGroup>
+
 </Project>
