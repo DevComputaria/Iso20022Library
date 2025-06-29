@@ -1,6 +1,6 @@
 using Iso20022Library.Domain.Common.Interfaces;
 using Iso20022Library.Infrastructure.Xml;
-using Iso20022Library.Messages.Payments.Pain.Generated;
+using Iso20022Library.Messages.Payments.Pain.Generated.Pain00100104;
 
 namespace Iso20022Library.Application.Builders.Pain
 {
@@ -77,12 +77,8 @@ namespace Iso20022Library.Application.Builders.Pain
             if (_document.CstmrCdtTrfInitn.GrpHdr == null)
                 _document.CstmrCdtTrfInitn.GrpHdr = new GroupHeader48();
 
-            var authorizations = new List<Authorisation1Choice>();
-            if (_document.CstmrCdtTrfInitn.GrpHdr.Authstn != null)
-                authorizations.AddRange(_document.CstmrCdtTrfInitn.GrpHdr.Authstn);
-
-            authorizations.Add(authorization);
-            _document.CstmrCdtTrfInitn.GrpHdr.Authstn = authorizations.ToArray();
+            // Use the collection directly
+            _document.CstmrCdtTrfInitn.GrpHdr.Authstn.Add(authorization);
             return this;
         }
 
@@ -107,9 +103,7 @@ namespace Iso20022Library.Application.Builders.Pain
         /// <returns>The current builder instance for method chaining.</returns>
         public Pain00100104Builder AddPaymentInstruction(PaymentInstruction6 paymentInstruction)
         {
-            var paymentInstructions = _document.CstmrCdtTrfInitn.PmtInf?.ToList() ?? new List<PaymentInstruction6>();
-            paymentInstructions.Add(paymentInstruction);
-            _document.CstmrCdtTrfInitn.PmtInf = paymentInstructions.ToArray();
+            _document.CstmrCdtTrfInitn.PmtInf.Add(paymentInstruction);
             return this;
         }
 
@@ -124,11 +118,11 @@ namespace Iso20022Library.Application.Builders.Pain
         /// <param name="debtorAgent">Financial institution servicing the debtor's account.</param>
         /// <returns>The current builder instance for method chaining.</returns>
         public Pain00100104Builder AddPaymentInstruction(
-            string paymentInfoId, 
-            PaymentMethod3Code paymentMethod, 
+            string paymentInfoId,
+            PaymentMethod3Code paymentMethod,
             DateTime requestedExecutionDate,
             PartyIdentification43 debtor,
-            CashAccount24 debtorAccount, 
+            CashAccount24 debtorAccount,
             BranchAndFinancialInstitutionIdentification5 debtorAgent)
         {
             var paymentInstruction = new PaymentInstruction6
@@ -138,8 +132,8 @@ namespace Iso20022Library.Application.Builders.Pain
                 ReqdExctnDt = requestedExecutionDate,
                 Dbtr = debtor,
                 DbtrAcct = debtorAccount,
-                DbtrAgt = debtorAgent,
-                CdtTrfTxInf = new CreditTransferTransaction1[] { }
+                DbtrAgt = debtorAgent
+                // Do not set CdtTrfTxInf here; it will be empty by default
             };
 
             return AddPaymentInstruction(paymentInstruction);
@@ -152,13 +146,11 @@ namespace Iso20022Library.Application.Builders.Pain
         /// <returns>The current builder instance for method chaining.</returns>
         public Pain00100104Builder AddCreditTransferTransaction(CreditTransferTransaction1 creditTransfer)
         {
-            if (_document.CstmrCdtTrfInitn.PmtInf == null || _document.CstmrCdtTrfInitn.PmtInf.Length == 0)
+            if (_document.CstmrCdtTrfInitn.PmtInf == null || _document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 throw new InvalidOperationException("Cannot add a credit transfer transaction without a payment instruction.");
 
-            var lastPaymentInstruction = _document.CstmrCdtTrfInitn.PmtInf[_document.CstmrCdtTrfInitn.PmtInf.Length - 1];
-            var transactions = lastPaymentInstruction.CdtTrfTxInf?.ToList() ?? new List<CreditTransferTransaction1>();
-            transactions.Add(creditTransfer);
-            lastPaymentInstruction.CdtTrfTxInf = transactions.ToArray();
+            var lastPaymentInstruction = _document.CstmrCdtTrfInitn.PmtInf[_document.CstmrCdtTrfInitn.PmtInf.Count - 1];
+            lastPaymentInstruction.CdtTrfTxInf.Add(creditTransfer);
             return this;
         }
 
@@ -176,7 +168,7 @@ namespace Iso20022Library.Application.Builders.Pain
             PartyIdentification43 creditor,
             CashAccount24 creditorAccount)
         {
-            if (_document.CstmrCdtTrfInitn.PmtInf == null || _document.CstmrCdtTrfInitn.PmtInf.Length == 0)
+            if (_document.CstmrCdtTrfInitn.PmtInf == null || _document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 throw new InvalidOperationException("Cannot add a credit transfer transaction without a payment instruction.");
 
             var transaction = new CreditTransferTransaction1
@@ -197,9 +189,7 @@ namespace Iso20022Library.Application.Builders.Pain
         /// <returns>The current builder instance for method chaining.</returns>
         public Pain00100104Builder AddSupplementaryData(SupplementaryData1 supplementaryData)
         {
-            var supplementaryDataList = _document.CstmrCdtTrfInitn.SplmtryData?.ToList() ?? new List<SupplementaryData1>();
-            supplementaryDataList.Add(supplementaryData);
-            _document.CstmrCdtTrfInitn.SplmtryData = supplementaryDataList.ToArray();
+            _document.CstmrCdtTrfInitn.SplmtryData.Add(supplementaryData);
             return this;
         }
 
@@ -212,7 +202,8 @@ namespace Iso20022Library.Application.Builders.Pain
             if (_document.CstmrCdtTrfInitn.GrpHdr == null)
                 _document.CstmrCdtTrfInitn.GrpHdr = new GroupHeader48();
 
-            if (_document.CstmrCdtTrfInitn.PmtInf == null || _document.CstmrCdtTrfInitn.PmtInf.Length == 0)
+            // Use .Count for Collection<T> instead of .Length
+            if (_document.CstmrCdtTrfInitn.PmtInf == null || _document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 return this;
 
             int totalTransactions = 0;
@@ -222,14 +213,16 @@ namespace Iso20022Library.Application.Builders.Pain
             {
                 if (paymentInstruction.CdtTrfTxInf != null)
                 {
-                    totalTransactions += paymentInstruction.CdtTrfTxInf.Length;
+                    totalTransactions += paymentInstruction.CdtTrfTxInf.Count;
 
                     foreach (var transaction in paymentInstruction.CdtTrfTxInf)
                     {
-                        if (transaction.Amt?.Item is ActiveOrHistoricCurrencyAndAmount amount)
+                        // The generated AmountType3Choice may have InstdAmt or EqvtAmt; prefer InstdAmt for sum
+                        if (transaction.Amt?.InstdAmt != null)
                         {
-                            totalAmount += amount.Value;
+                            totalAmount += transaction.Amt.InstdAmt.Value;
                         }
+                        // If EqvtAmt is needed, add handling here
                     }
                 }
             }

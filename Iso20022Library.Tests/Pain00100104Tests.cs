@@ -1,7 +1,8 @@
 ﻿using Iso20022Library.Application.Builders;
 using Iso20022Library.Application.Validators;
 using Iso20022Library.Domain.Common.Enums;
-using Iso20022Library.Messages.Payments.Pain.Generated;
+using Iso20022Library.Messages.Payments.Pain.Generated.Pain00100104;
+using static Iso20022Library.Messages.Payments.Pain.Generated.Pain00100104.PaymentMethod3Code;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,33 +33,32 @@ namespace Iso20022Library.Tests
                         CtrlSum = 100.00m,
                         CtrlSumSpecified = true
                     },
-                    PmtInf = new PaymentInstruction6[] // Corrected type to array as required by CustomerCreditTransferInitiationV04
-                    {
-                        new PaymentInstruction6
+                    PmtInf =
                         {
-                            PmtInfId = "TestPmtInfId",
-                            PmtMtd = PaymentMethod3Code.TRF,
-                            NbOfTxs = "1",
-                            CtrlSum = 100.00m,
-                            CtrlSumSpecified = true,
-                            ReqdExctnDt = DateTime.Today,
-                            Dbtr = new PartyIdentification43 { Nm = "Debtor Name" },
-                            DbtrAcct = new CashAccount24 { Id = new AccountIdentification4Choice { Item = "DE89370400440532013000" } },
-                            DbtrAgt = new BranchAndFinancialInstitutionIdentification5 { FinInstnId = new FinancialInstitutionIdentification8 { BICFI = "TESTBICD" } },
-                            // Changed from List<CreditTransferTransaction1> to CreditTransferTransaction1[] as required by PaymentInstruction6
-                            CdtTrfTxInf = new CreditTransferTransaction1[]
+                            new PaymentInstruction6
                             {
-                                new CreditTransferTransaction1
+                                PmtInfId = "TestPmtInfId",
+                                PmtMtd = PaymentMethod3Code.Trf,
+                                NbOfTxs = "1",
+                                CtrlSum = 100.00m,
+                                CtrlSumSpecified = true,
+                                ReqdExctnDt = DateTime.Today,
+                                Dbtr = new PartyIdentification43 { Nm = "Debtor Name" },
+                                DbtrAcct = new CashAccount24 { Id = new AccountIdentification4Choice { Iban = "DE89370400440532013000" } },
+                                DbtrAgt = new BranchAndFinancialInstitutionIdentification5 { FinInstnId = new FinancialInstitutionIdentification8 { Bicfi = "TESTBICD" } },
+                                CdtTrfTxInf =
                                 {
-                                    PmtId = new PaymentIdentification1 { InstrId = "InstrId", EndToEndId = "EndToEndId" },
-                                    Amt = new AmountType3Choice { Item = new ActiveOrHistoricCurrencyAndAmount { Ccy = "EUR", Value = 100.00m } },
-                                    CdtrAgt = new BranchAndFinancialInstitutionIdentification5 { FinInstnId = new FinancialInstitutionIdentification8 { BICFI = "TESTBICC" } },
-                                    Cdtr = new PartyIdentification43 { Nm = "Creditor Name" },
-                                    CdtrAcct = new CashAccount24 { Id = new AccountIdentification4Choice { Item = "DE02120300000000202051" } }
+                                    new CreditTransferTransaction1
+                                    {
+                                        PmtId = new PaymentIdentification1 { InstrId = "InstrId", EndToEndId = "EndToEndId" },
+                                        Amt = new AmountType3Choice { InstdAmt = new ActiveOrHistoricCurrencyAndAmount { Ccy = "EUR", Value = 100.00m } },
+                                        CdtrAgt = new BranchAndFinancialInstitutionIdentification5 { FinInstnId = new FinancialInstitutionIdentification8 { Bicfi = "TESTBICC" } },
+                                        Cdtr = new PartyIdentification43 { Nm = "Creditor Name" },
+                                        CdtrAcct = new CashAccount24 { Id = new AccountIdentification4Choice { Iban = "DE02120300000000202051" } }
+                                    }
                                 }
                             }
                         }
-                    }
                 }
             };
 
