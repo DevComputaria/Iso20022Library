@@ -29,7 +29,8 @@ public class MessageBuilderFactory
     private readonly Dictionary<MessageType, IMessageBuilder> _builders = new()
     {
         { MessageType.Pain00100104, new Pain00100104Builder() },
-        { MessageType.Pain00100102, new Pain.Pain00100102Builder() }
+        { MessageType.Pain00100102, new Pain.Pain00100102Builder() },
+        { MessageType.Pain00200104, new Pain.Pain00200104Builder() }
     };
 
     /// <summary>
