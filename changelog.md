@@ -12,6 +12,21 @@
 - Added Pain00100102Builder for ISO 20022 pain.001.001.02 messages, following the builder pattern.
 - Registered Pain00100102Builder in MessageBuilderFactory to support MessageType.Pain00100102.
 
+### Added
+- Completed Pain00200106Builder for ISO 20022 pain.002.001.06 messages (Customer Payment Status Report V06).
+- Added comprehensive unit tests for Pain00200106Builder with 19 test methods covering all functionality.
+- Builder includes support for:
+  - GroupHeader52 configuration
+  - OriginalGroupHeader1 setup
+  - Adding single and multiple OriginalPaymentInstruction12 entries
+  - Adding single and multiple SupplementaryData1 entries
+  - Complete validation and error handling
+  - XML serialization functionality
+  - Builder pattern methods (Reset, Clone, Clear operations)
+- Fixed test compilation error in CreateSampleSupplementaryData helper method by correctly creating SupplementaryDataEnvelope1 object.
+- All tests pass successfully (19/19) confirming proper builder functionality.
+- Builder is already registered in MessageBuilderFactory for MessageType.Pain00200106.
+
 ## [2025-06-29] Regenerated Pain.001.001.04 C# class from XSD using xscgen
 - Used xscgen with explicit XML-to-C# namespace mapping to generate Iso20022Library.Messages.Payments.Pain.Pain00100104.cs from pain.001.001.04.xsd.
 - Marked the old pain_001_001_04.cs as obsolete and safe to remove.
