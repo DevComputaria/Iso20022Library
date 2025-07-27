@@ -1,0 +1,119 @@
+name: Release and Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  CONFIGURATION: Release
+
+jobs:
+  build-and-publish:
+    name: Build and Publish NuGet Packages
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Determine version
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" == "release" ]; then
+          VERSION="${{ github.event.release.tag_name }}"
+          # Remove 'v' prefix if present
+          VERSION="${VERSION#v}"
+        else
+          VERSION="${{ github.event.inputs.version }}"
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Publishing version: $VERSION"
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build solution
+      run: dotnet build --no-restore --configuration ${{ env.CONFIGURATION }}
+    
+    - name: Run tests
+      run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }} --verbosity normal
+    
+    - name: Pack Domain package
+      run: |
+        dotnet pack Iso20022Library.Domain/Iso20022Library.Domain.csproj \
+          --no-build \
+          --configuration ${{ env.CONFIGURATION }} \
+          --output ./packages \
+          /p:Version=${{ steps.version.outputs.VERSION }} \
+          /p:PackageReleaseNotes="Release ${{ steps.version.outputs.VERSION }}"
+    
+    - name: Pack Messages package
+      run: |
+        dotnet pack Iso20022Library.Messages/Iso20022Library.Messages.csproj \
+          --no-build \
+          --configuration ${{ env.CONFIGURATION }} \
+          --output ./packages \
+          /p:Version=${{ steps.version.outputs.VERSION }} \
+          /p:PackageReleaseNotes="Release ${{ steps.version.outputs.VERSION }}"
+    
+    - name: Pack Infrastructure package
+      run: |
+        dotnet pack Iso20022Library.Infrastructure/Iso20022Library.Infrastructure.csproj \
+          --no-build \
+          --configuration ${{ env.CONFIGURATION }} \
+          --output ./packages \
+          /p:Version=${{ steps.version.outputs.VERSION }} \
+          /p:PackageReleaseNotes="Release ${{ steps.version.outputs.VERSION }}"
+    
+    - name: Pack Application package
+      run: |
+        dotnet pack Iso20022Library.Application/Iso20022Library.Application.csproj \
+          --no-build \
+          --configuration ${{ env.CONFIGURATION }} \
+          --output ./packages \
+          /p:Version=${{ steps.version.outputs.VERSION }} \
+          /p:PackageReleaseNotes="Release ${{ steps.version.outputs.VERSION }}"
+    
+    - name: Upload packages to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages-${{ steps.version.outputs.VERSION }}
+        path: ./packages/*.nupkg
+        retention-days: 90
+    
+    - name: Publish to NuGet.org
+      if: github.event_name == 'release'
+      run: |
+        for package in ./packages/*.nupkg; do
+          echo "Publishing $package"
+          dotnet nuget push "$package" \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+        done
+    
+    - name: Create GitHub release assets
+      if: github.event_name == 'workflow_dispatch'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.version.outputs.VERSION }}
+        name: Release ${{ steps.version.outputs.VERSION }}
+        files: ./packages/*.nupkg
+        generate_release_notes: true
+        draft: false
+        prerelease: false

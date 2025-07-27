@@ -1,5 +1,10 @@
 # 📦 Iso20022Library
 
+[![CI/CD Pipeline](https://github.com/marci/Iso20022Library/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/marci/Iso20022Library/actions)
+[![Pull Request Validation](https://github.com/marci/Iso20022Library/workflows/Pull%20Request%20Validation/badge.svg)](https://github.com/marci/Iso20022Library/actions)
+[![Code Coverage](https://github.com/marci/Iso20022Library/workflows/Code%20Coverage/badge.svg)](https://github.com/marci/Iso20022Library/actions)
+[![NuGet](https://img.shields.io/nuget/v/Iso20022Library.Application.svg)](https://www.nuget.org/packages/Iso20022Library.Application/)
+
 Biblioteca modular em C# (.NET 8) para gerar, serializar e validar mensagens do padrão **ISO 20022**, com suporte a estrutura **Clean Architecture**, **validação via XSD** e geração de **documentação automática com DocFX**.
 
 ---

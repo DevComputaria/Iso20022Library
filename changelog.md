@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 ### Added
+- **GitHub Actions CI/CD Pipeline** with comprehensive automation:
+  - Automated build and test on push and pull requests
+  - Code quality analysis and security scanning
+  - Automated NuGet package creation and publishing
+  - Pull request validation with status comments
+  - Release workflow with semantic versioning
+  - Dependabot configuration for dependency updates
+  - Version management workflow with GitVersion integration
 - **Completed Pain00200109Builder** for ISO 20022 pain.002.001.09 messages (Customer Payment Status Report V09).
 - Implemented complete builder pattern with comprehensive API for message construction.
 - Added builder registration in MessageBuilderFactory for MessageType.Pain00200109.

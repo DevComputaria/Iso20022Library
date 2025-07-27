@@ -763,7 +763,7 @@ namespace Iso20022Library.Tests.Builders
             _builder.Build();
         }
 
-        [TestMethod] 
+        [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Build_WithoutAnyPaymentInstructions_ShouldThrowValidationException()
         {

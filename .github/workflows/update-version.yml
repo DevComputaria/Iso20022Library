@@ -1,0 +1,138 @@
+name: Update Version and Changelog
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
+      prerelease:
+        description: 'Is this a prerelease?'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  update-version:
+    name: Update Project Version
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        versionSpec: '5.x'
+    
+    - name: Determine version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.10.2
+      with:
+        useConfigFile: true
+    
+    - name: Create new version
+      id: version
+      run: |
+        CURRENT_VERSION="${{ steps.gitversion.outputs.majorMinorPatch }}"
+        IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+        MAJOR=${VERSION_PARTS[0]}
+        MINOR=${VERSION_PARTS[1]}
+        PATCH=${VERSION_PARTS[2]}
+        
+        case "${{ github.event.inputs.version_type }}" in
+          "major")
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            ;;
+          "minor")
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            ;;
+          "patch")
+            PATCH=$((PATCH + 1))
+            ;;
+        esac
+        
+        NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+        
+        if [ "${{ github.event.inputs.prerelease }}" == "true" ]; then
+          NEW_VERSION="$NEW_VERSION-alpha.$(date +%Y%m%d%H%M%S)"
+        fi
+        
+        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "New version will be: $NEW_VERSION"
+    
+    - name: Update project files
+      run: |
+        # Update all .csproj files with new version
+        find . -name "*.csproj" -not -path "./packages/*" | xargs sed -i "s/<Version>.*<\/Version>/<Version>${{ steps.version.outputs.NEW_VERSION }}<\/Version>/g"
+        
+        # Add version to project files if not exists
+        for file in $(find . -name "*.csproj" -not -path "./packages/*"); do
+          if ! grep -q "<Version>" "$file"; then
+            sed -i '/<PropertyGroup>/a\    <Version>${{ steps.version.outputs.NEW_VERSION }}</Version>' "$file"
+          fi
+        done
+    
+    - name: Update changelog
+      run: |
+        # Create backup of changelog
+        cp changelog.md changelog.md.bak
+        
+        # Get current date
+        CURRENT_DATE=$(date +"%Y-%m-%d")
+        
+        # Create new changelog entry
+        cat > changelog_temp.md << EOF
+        # Changelog
+        
+        ## [${{ steps.version.outputs.NEW_VERSION }}] - $CURRENT_DATE
+        ### Added
+        - Version bump to ${{ steps.version.outputs.NEW_VERSION }}
+        
+        EOF
+        
+        # Append rest of changelog (skip first line)
+        tail -n +2 changelog.md >> changelog_temp.md
+        
+        # Replace original
+        mv changelog_temp.md changelog.md
+    
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "chore: bump version to ${{ steps.version.outputs.NEW_VERSION }}"
+        git tag -a "v${{ steps.version.outputs.NEW_VERSION }}" -m "Release version ${{ steps.version.outputs.NEW_VERSION }}"
+        git push origin HEAD
+        git push origin --tags
+    
+    - name: Create release
+      if: github.event.inputs.prerelease != 'true'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.version.outputs.NEW_VERSION }}
+        release_name: Release ${{ steps.version.outputs.NEW_VERSION }}
+        draft: false
+        prerelease: ${{ github.event.inputs.prerelease }}
+        generate_release_notes: true

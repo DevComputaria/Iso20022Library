@@ -1,0 +1,151 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        dotnet-version: ['8.0.x']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for better analysis
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Run tests
+      run: dotnet test --no-build --configuration Release --verbosity normal --logger trx --results-directory TestResults
+    
+    - name: Publish test results
+      uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        name: .NET Test Results
+        path: TestResults/*.trx
+        reporter: dotnet-trx
+        fail-on-error: true
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/
+        retention-days: 30
+
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Run code analysis
+      run: dotnet build --verbosity normal --configuration Release /p:TreatWarningsAsErrors=true
+
+  package:
+    name: Create NuGet Package
+    runs-on: ubuntu-latest
+    needs: [build-and-test, code-quality]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Create version number
+      id: version
+      run: |
+        VERSION="1.0.0-alpha.$(date +%Y%m%d%H%M%S)"
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Creating version: $VERSION"
+    
+    - name: Pack NuGet packages
+      run: |
+        dotnet pack Iso20022Library.Domain/Iso20022Library.Domain.csproj --no-restore --configuration Release --output ./packages /p:Version=${{ steps.version.outputs.VERSION }}
+        dotnet pack Iso20022Library.Messages/Iso20022Library.Messages.csproj --no-restore --configuration Release --output ./packages /p:Version=${{ steps.version.outputs.VERSION }}
+        dotnet pack Iso20022Library.Infrastructure/Iso20022Library.Infrastructure.csproj --no-restore --configuration Release --output ./packages /p:Version=${{ steps.version.outputs.VERSION }}
+        dotnet pack Iso20022Library.Application/Iso20022Library.Application.csproj --no-restore --configuration Release --output ./packages /p:Version=${{ steps.version.outputs.VERSION }}
+    
+    - name: Upload NuGet packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages
+        path: ./packages/*.nupkg
+        retention-days: 90
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Install security scan tool
+      run: dotnet tool install --global security-scan
+    
+    - name: Run security scan
+      run: security-scan *.sln --excl-dev=true
+      continue-on-error: true
