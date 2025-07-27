@@ -88,7 +88,7 @@ jobs:
   package:
     name: Create NuGet Package
     runs-on: ubuntu-latest
-    needs: [build-and-test, code-quality]
+    needs: [build-and-test, code-quality, tag-version]
     if: github.ref == 'refs/heads/master'
     
     steps:
@@ -102,27 +102,33 @@ jobs:
       with:
         dotnet-version: '8.0.x'
     
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        versionSpec: '5.x'
+    
+    - name: Determine version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.10.2
+      with:
+        useConfigFile: true
+    
     - name: Restore dependencies
       run: dotnet restore
     
-    - name: Create version number
-      id: version
-      run: |
-        VERSION="1.0.0-alpha.$(date +%Y%m%d%H%M%S)"
-        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-        echo "Creating version: $VERSION"
-    
     - name: Pack NuGet packages
       run: |
-        dotnet pack Iso20022Library.Domain/Iso20022Library.Domain.csproj --no-restore --configuration Release --output ./packages /p:Version=${{ steps.version.outputs.VERSION }}
-        dotnet pack Iso20022Library.Messages/Iso20022Library.Messages.csproj --no-restore --configuration Release --output ./packages /p:Version=${{ steps.version.outputs.VERSION }}
-        dotnet pack Iso20022Library.Infrastructure/Iso20022Library.Infrastructure.csproj --no-restore --configuration Release --output ./packages /p:Version=${{ steps.version.outputs.VERSION }}
-        dotnet pack Iso20022Library.Application/Iso20022Library.Application.csproj --no-restore --configuration Release --output ./packages /p:Version=${{ steps.version.outputs.VERSION }}
+        VERSION="${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+        echo "Creating NuGet packages with version: $VERSION"
+        dotnet pack Iso20022Library.Domain/Iso20022Library.Domain.csproj --no-restore --configuration Release --output ./packages /p:Version=$VERSION
+        dotnet pack Iso20022Library.Messages/Iso20022Library.Messages.csproj --no-restore --configuration Release --output ./packages /p:Version=$VERSION
+        dotnet pack Iso20022Library.Infrastructure/Iso20022Library.Infrastructure.csproj --no-restore --configuration Release --output ./packages /p:Version=$VERSION
+        dotnet pack Iso20022Library.Application/Iso20022Library.Application.csproj --no-restore --configuration Release --output ./packages /p:Version=$VERSION
     
     - name: Upload NuGet packages
       uses: actions/upload-artifact@v4
       with:
-        name: nuget-packages
+        name: nuget-packages-v${{ steps.gitversion.outputs.majorMinorPatch }}
         path: ./packages/*.nupkg
         retention-days: 90
 
@@ -158,3 +164,76 @@ jobs:
     - name: Run vulnerability scan
       run: dotnet list package --vulnerable --include-transitive
       continue-on-error: true
+
+  tag-version:
+    name: Create Version Tag
+    runs-on: ubuntu-latest
+    needs: [build-and-test, code-quality]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        versionSpec: '5.x'
+    
+    - name: Determine version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.10.2
+      with:
+        useConfigFile: true
+    
+    - name: Create version tag
+      run: |
+        VERSION="${{ steps.gitversion.outputs.majorMinorPatch }}"
+        TAG_NAME="v$VERSION"
+        
+        # Check if tag already exists
+        if git tag -l "$TAG_NAME" | grep -q "$TAG_NAME"; then
+          echo "Tag $TAG_NAME already exists, skipping..."
+        else
+          echo "Creating tag: $TAG_NAME"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "$TAG_NAME" -m "Release version $VERSION"
+          git push origin "$TAG_NAME"
+          echo "Created and pushed tag: $TAG_NAME"
+        fi
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.gitversion.outputs.majorMinorPatch }}
+        name: Release ${{ steps.gitversion.outputs.majorMinorPatch }}
+        body: |
+          ## 🚀 Release ${{ steps.gitversion.outputs.majorMinorPatch }}
+          
+          **Build:** ${{ github.sha }}
+          **Branch:** ${{ github.ref_name }}
+          
+          ### 📦 NuGet Packages
+          - Iso20022Library.Domain
+          - Iso20022Library.Messages  
+          - Iso20022Library.Infrastructure
+          - Iso20022Library.Application
+          
+          ### 🧪 Tests
+          All ${{ github.event.head_commit.message }} tests passed successfully.
+          
+          ---
+          *Auto-generated release from CI/CD pipeline*
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+        token: ${{ secrets.GITHUB_TOKEN }}

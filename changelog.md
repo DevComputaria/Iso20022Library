@@ -3,6 +3,10 @@
 ## [Unreleased]
 ### Fixed
 - **Cross-platform test compatibility**: Enhanced test infrastructure to resolve XSD file paths dynamically using cross-platform compatible `GetXsdPath` helper method, eliminating hardcoded Windows-specific paths that were causing failures in GitHub Actions Linux environment.
+- **Security scan configuration**: Fixed security scan tool compatibility by adding .NET 6.0 runtime support and correcting command-line arguments.
+### Added
+- **Automatic version tagging**: Added GitVersion-based automatic tagging system in CI/CD pipeline that creates semantic version tags and GitHub releases automatically on pushes to master branch.
+- **Enhanced NuGet packaging**: Improved NuGet package creation with GitVersion integration for consistent semantic versioning across all packages.
 ### Changed
 - **Updated GitHub Actions workflows** to use `master` branch instead of `main` branch for consistency with repository setup
 ### Added
