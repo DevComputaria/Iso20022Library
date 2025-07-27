@@ -1,9 +1,11 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- **Updated GitHub Actions workflows** to use `master` branch instead of `main` branch for consistency with repository setup
 ### Added
 - **GitHub Actions CI/CD Pipeline** with comprehensive automation:
-  - Automated build and test on push and pull requests
+  - Automated build and test on push and pull requests to `master` and `develop` branches
   - Code quality analysis and security scanning
   - Automated NuGet package creation and publishing
   - Pull request validation with status comments
