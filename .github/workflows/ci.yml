@@ -152,7 +152,7 @@ jobs:
       run: dotnet tool install --global security-scan
     
     - name: Run security scan
-      run: security-scan *.sln --excl-dev=true
+      run: security-scan Iso20022Library.sln --excl-dev
       continue-on-error: true
     
     - name: Run vulnerability scan
