@@ -27,6 +27,23 @@
 - All tests pass successfully (19/19) confirming proper builder functionality.
 - Builder is already registered in MessageBuilderFactory for MessageType.Pain00200106.
 
+- Completed Pain00200107Builder for ISO 20022 pain.002.001.07 messages (Customer Payment Status Report V07).
+- Added comprehensive unit tests for Pain00200107Builder with 19 test methods covering all functionality.
+- Builder includes support for:
+  - GroupHeader52 configuration (with InitgPty property)
+  - OriginalGroupHeader1 setup
+  - Adding single and multiple OriginalPaymentInstruction18 entries
+  - Adding single and multiple SupplementaryData1 entries
+  - Complete validation and error handling
+  - XML serialization functionality
+  - Builder pattern methods (Reset, Clone, Clear operations)
+- Fixed test helper methods to use correct types and properties for pain.002.001.07:
+  - Updated GroupHeader52 helper to use InitgPty instead of InstgAgt
+  - Fixed BICFI property name to Bicfi (lowercase 'i')
+  - Corrected enum usage from ExternalPaymentGroupStatus1Code to TransactionGroupStatus3Code
+- All tests pass successfully (19/19) confirming proper builder functionality.
+- Builder is registered in MessageBuilderFactory for MessageType.Pain00200107.
+
 ## [2025-06-29] Regenerated Pain.001.001.04 C# class from XSD using xscgen
 - Used xscgen with explicit XML-to-C# namespace mapping to generate Iso20022Library.Messages.Payments.Pain.Pain00100104.cs from pain.001.001.04.xsd.
 - Marked the old pain_001_001_04.cs as obsolete and safe to remove.

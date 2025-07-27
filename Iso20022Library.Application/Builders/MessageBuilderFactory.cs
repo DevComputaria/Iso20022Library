@@ -31,7 +31,8 @@ public class MessageBuilderFactory
         { MessageType.Pain00100104, new Pain00100104Builder() },
         { MessageType.Pain00100102, new Pain.Pain00100102Builder() },
         { MessageType.Pain00200104, new Pain.Pain00200104Builder() },
-        { MessageType.Pain00200106, new Pain.Pain00200106Builder() }
+        { MessageType.Pain00200106, new Pain.Pain00200106Builder() },
+        { MessageType.Pain00200107, new Pain.Pain00200107Builder() }
     };
 
     /// <summary>
