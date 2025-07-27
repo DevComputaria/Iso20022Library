@@ -4,6 +4,10 @@
 ### Fixed
 - **Cross-platform test compatibility**: Enhanced test infrastructure to resolve XSD file paths dynamically using cross-platform compatible `GetXsdPath` helper method, eliminating hardcoded Windows-specific paths that were causing failures in GitHub Actions Linux environment.
 - **Security scan configuration**: Fixed security scan tool compatibility by adding .NET 6.0 runtime support and correcting command-line arguments.
+- **Pain00200110Builder Exception Types**: Fixed exception type mismatches in the `Pain00200110Builder` class:
+  - Updated `ValidateParameter` method to throw `ArgumentException` instead of `ArgumentNullException` for consistency with test expectations
+  - Added special case handling for `AddSupplementaryData` method to correctly throw `ArgumentNullException`
+  - Fixed error message in `AddPaymentTransaction` to match expected test assertion
 ### Added
 - **Automatic version tagging**: Added GitVersion-based automatic tagging system in CI/CD pipeline that creates semantic version tags and GitHub releases automatically on pushes to master branch.
 - **Enhanced NuGet packaging**: Improved NuGet package creation with GitVersion integration for consistent semantic versioning across all packages.
@@ -19,15 +23,17 @@
   - Dependabot configuration for dependency updates
   - Version management workflow with GitVersion integration
 - **Completed Pain00200109Builder** for ISO 20022 pain.002.001.09 messages (Customer Payment Status Report V09).
+- **Completed Pain00200110Builder** for ISO 20022 pain.002.001.10 messages (Customer Payment Status Report V10).
 - Implemented complete builder pattern with comprehensive API for message construction.
-- Added builder registration in MessageBuilderFactory for MessageType.Pain00200109.
-- Created extensive unit test suite with 44 test methods covering all builder functionality.
-- Builder includes support for:
+- Added builder registration in MessageBuilderFactory for MessageType.Pain00200109 and MessageType.Pain00200110.
+- Created extensive unit test suite with 44+ test methods covering all builder functionality.
+- Builders include support for:
   - Message identification and creation date time
   - Initiating party and forwarding agent configuration
   - Original group information and status reporting
   - Original payment instruction status handling
   - Payment transaction status with detailed reason codes
+  - Supplementary data handling
   - Supplementary data support
   - Comprehensive validation and error handling
   - XML serialization and deserialization

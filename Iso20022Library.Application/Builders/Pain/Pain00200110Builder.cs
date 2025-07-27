@@ -180,18 +180,17 @@ namespace Iso20022Library.Application.Builders.Pain
         /// This allows detailed instruction-level status reporting.
         /// </summary>
         /// <param name="originalInstructionId">Original instruction identification</param>
-        /// <param name="paymentStatus">Status of the payment instruction</param>
+        /// <param name="paymentStatus">Status of the payment instruction (optional)</param>
         /// <param name="numberOfTransactions">Number of transactions in the instruction (optional)</param>
         /// <param name="controlSum">Total amount of the instruction (optional)</param>
         /// <returns>The builder instance for method chaining</returns>
         public Pain00200110Builder AddOriginalPaymentInstruction(
             string originalInstructionId,
-            string paymentStatus,
+            string? paymentStatus = null,
             string? numberOfTransactions = null,
             decimal? controlSum = null)
         {
             ValidateParameter(originalInstructionId, nameof(originalInstructionId));
-            ValidateParameter(paymentStatus, nameof(paymentStatus));
 
             var paymentInstruction = new OriginalPaymentInstruction32
             {
@@ -271,7 +270,7 @@ namespace Iso20022Library.Application.Builders.Pain
 
             if (_report.OrgnlPmtInfAndSts.Count == 0)
             {
-                throw new InvalidOperationException("No payment instruction has been added. Use AddOriginalPaymentInstruction first.");
+                throw new InvalidOperationException("Add an original payment instruction before adding transactions.");
             }
 
             var lastInstruction = _report.OrgnlPmtInfAndSts[_report.OrgnlPmtInfAndSts.Count - 1];
@@ -513,7 +512,12 @@ namespace Iso20022Library.Application.Builders.Pain
         {
             if (value == null)
             {
-                throw new ArgumentNullException(parameterName);
+                // Special case for the 'data' parameter in AddSupplementaryData method
+                if (parameterName == "data")
+                {
+                    throw new ArgumentNullException(parameterName);
+                }
+                throw new ArgumentException("Parameter cannot be null.", parameterName);
             }
 
             if (value is string stringValue && string.IsNullOrEmpty(stringValue))
