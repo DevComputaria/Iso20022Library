@@ -88,24 +88,24 @@ namespace Iso20022Library.Tests
             // Get the current test assembly location
             var assemblyLocation = Assembly.GetExecutingAssembly().Location;
             var assemblyDirectory = Path.GetDirectoryName(assemblyLocation);
-            
+
             if (string.IsNullOrEmpty(assemblyDirectory))
             {
                 throw new InvalidOperationException("Could not determine assembly directory");
             }
-            
+
             // Navigate up to find the solution root
             var currentDir = new DirectoryInfo(assemblyDirectory);
             while (currentDir != null && !File.Exists(Path.Combine(currentDir.FullName, "Iso20022Library.sln")))
             {
                 currentDir = currentDir.Parent;
             }
-            
+
             if (currentDir == null)
             {
                 throw new DirectoryNotFoundException("Could not find solution root directory");
             }
-            
+
             // Build the path to the XSD file
             var xsdPath = Path.Combine(
                 currentDir.FullName,
@@ -115,12 +115,12 @@ namespace Iso20022Library.Tests
                 "Xsd",
                 xsdFileName
             );
-            
+
             if (!File.Exists(xsdPath))
             {
                 throw new FileNotFoundException($"XSD file not found: {xsdPath}");
             }
-            
+
             return xsdPath;
         }
     }

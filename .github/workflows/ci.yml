@@ -135,7 +135,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Setup .NET
+    - name: Setup .NET 6.0 for security tools
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '6.0.x'
+    
+    - name: Setup .NET 8.0
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
@@ -148,4 +153,8 @@ jobs:
     
     - name: Run security scan
       run: security-scan *.sln --excl-dev=true
+      continue-on-error: true
+    
+    - name: Run vulnerability scan
+      run: dotnet list package --vulnerable --include-transitive
       continue-on-error: true
