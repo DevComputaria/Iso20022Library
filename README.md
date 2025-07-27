@@ -108,7 +108,7 @@ This library follows the ISO 20022 message organization structure, organizing me
 To create the recommended folder structure for the ISO 20022 messages, run the PowerShell script:
 
 ```powershell
-cd c:\Users\marci\source\repos\Iso20022Library\scripts
+cd scripts
 .\Create-FolderStructure.ps1
 ```
 

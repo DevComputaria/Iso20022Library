@@ -1,6 +1,8 @@
 # Script to create the ISO 20022 message folder structure
 
-$baseDir = "c:\Users\marci\source\repos\Iso20022Library\src\Iso20022Library.Messages"
+# Get the script directory and build relative path to Messages project
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$baseDir = Join-Path -Path (Split-Path -Parent $scriptDir) -ChildPath "Iso20022Library.Messages"
 
 # Create base directory if it doesn't exist
 if (!(Test-Path $baseDir)) {

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Iso20022Library.Tests
 {
@@ -66,13 +67,61 @@ namespace Iso20022Library.Tests
             var builder = factory.GetBuilder(MessageType.Pain00100104);
             var xml = builder.BuildXml(document);
 
-            var xsdPath = "C:\\Users\\marci\\source\\repos\\Iso20022Library\\Iso20022Library.Messages\\Payments\\Pain\\Xsd\\pain.001.001.04.xsd";
+            // Get the XSD path relative to the solution directory
+            var xsdPath = GetXsdPath("pain.001.001.04.xsd");
 
             // Act
             bool isValid = XmlValidator.Validate(xml, xsdPath, out string errors);
 
             // Assert
             Assert.IsTrue(isValid, $"XML inválido: {errors}");
+        }
+
+        /// <summary>
+        /// Gets the XSD file path relative to the solution directory.
+        /// This method works across different operating systems and environments.
+        /// </summary>
+        /// <param name="xsdFileName">The name of the XSD file</param>
+        /// <returns>The full path to the XSD file</returns>
+        private static string GetXsdPath(string xsdFileName)
+        {
+            // Get the current test assembly location
+            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            var assemblyDirectory = Path.GetDirectoryName(assemblyLocation);
+            
+            if (string.IsNullOrEmpty(assemblyDirectory))
+            {
+                throw new InvalidOperationException("Could not determine assembly directory");
+            }
+            
+            // Navigate up to find the solution root
+            var currentDir = new DirectoryInfo(assemblyDirectory);
+            while (currentDir != null && !File.Exists(Path.Combine(currentDir.FullName, "Iso20022Library.sln")))
+            {
+                currentDir = currentDir.Parent;
+            }
+            
+            if (currentDir == null)
+            {
+                throw new DirectoryNotFoundException("Could not find solution root directory");
+            }
+            
+            // Build the path to the XSD file
+            var xsdPath = Path.Combine(
+                currentDir.FullName,
+                "Iso20022Library.Messages",
+                "Payments",
+                "Pain",
+                "Xsd",
+                xsdFileName
+            );
+            
+            if (!File.Exists(xsdPath))
+            {
+                throw new FileNotFoundException($"XSD file not found: {xsdPath}");
+            }
+            
+            return xsdPath;
         }
     }
 }

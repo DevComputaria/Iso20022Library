@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- **Cross-platform test compatibility**: Enhanced test infrastructure to resolve XSD file paths dynamically using cross-platform compatible `GetXsdPath` helper method, eliminating hardcoded Windows-specific paths that were causing failures in GitHub Actions Linux environment.
 ### Changed
 - **Updated GitHub Actions workflows** to use `master` branch instead of `main` branch for consistency with repository setup
 ### Added
