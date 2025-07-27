@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 ### Added
+- **Completed Pain00200109Builder** for ISO 20022 pain.002.001.09 messages (Customer Payment Status Report V09).
+- Implemented complete builder pattern with comprehensive API for message construction.
+- Added builder registration in MessageBuilderFactory for MessageType.Pain00200109.
+- Created extensive unit test suite with 44 test methods covering all builder functionality.
+- Builder includes support for:
+  - Message identification and creation date time
+  - Initiating party and forwarding agent configuration
+  - Original group information and status reporting
+  - Original payment instruction status handling
+  - Payment transaction status with detailed reason codes
+  - Supplementary data support
+  - Comprehensive validation and error handling
+  - XML serialization and deserialization
 - **Completed Pain00200108Builder** for ISO 20022 pain.002.001.08 messages (Customer Payment Status Report V08).
 - Implemented BuildXml(object message) method to fully comply with IMessageBuilder interface.
 - Fixed builder to use correct generated class property names and structure for Pain00200108.
