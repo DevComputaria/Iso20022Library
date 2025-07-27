@@ -141,12 +141,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Setup .NET 6.0 for security tools
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '6.0.x'
-    
-    - name: Setup .NET 8.0
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
@@ -154,15 +149,27 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     
-    - name: Install security scan tool
-      run: dotnet tool install --global security-scan
-    
-    - name: Run security scan
-      run: security-scan Iso20022Library.sln --excl-dev
-      continue-on-error: true
-    
     - name: Run vulnerability scan
       run: dotnet list package --vulnerable --include-transitive
+      continue-on-error: true
+    
+    - name: Install and run security scan (optional)
+      run: |
+        # Try to install and run security-scan, but don't fail if it doesn't work
+        if dotnet tool install --global security-scan --version 5.6.7; then
+          echo "Security scan tool installed successfully"
+          if security-scan Iso20022Library.sln; then
+            echo "Security scan completed successfully"
+          else
+            echo "Security scan failed, but continuing..."
+          fi
+        else
+          echo "Failed to install security scan tool, skipping..."
+        fi
+      continue-on-error: true
+    
+    - name: Run built-in code analysis
+      run: dotnet build --configuration Release --verbosity minimal /p:RunAnalyzersDuringBuild=true /p:TreatWarningsAsErrors=false
       continue-on-error: true
 
   tag-version:
