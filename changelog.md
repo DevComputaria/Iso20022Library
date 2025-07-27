@@ -1,6 +1,26 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- **Completed Pain00200108Builder** for ISO 20022 pain.002.001.08 messages (Customer Payment Status Report V08).
+- Implemented BuildXml(object message) method to fully comply with IMessageBuilder interface.
+- Fixed builder to use correct generated class property names and structure for Pain00200108.
+- Updated and fixed all unit tests to match actual generated class properties and structure.
+- Builder includes support for:
+  - GroupHeader52 configuration
+  - Original group information and status
+  - Original payment instructions
+  - Payment transactions with status
+  - Transaction status reasons
+  - Supplementary data
+- Pain00200108Builder is registered in MessageBuilderFactory to support MessageType.Pain00200108.
+- **All tests now passing (96/96)** - comprehensive test coverage for all builder functionality.
+
+### Fixed
+- **Critical bug in AddPaymentTransaction method**: Fixed incorrect assignment where originalTransactionId parameter was overwriting OrgnlEndToEndId instead of properly setting OrgnlInstrId property.
+- **Test validation issues**: Updated all failing tests to include required minimal builder setup (SetMessageIdentification, SetOriginalGroupInformation, AddOriginalPaymentInstruction).
+- **Test assertions**: Fixed test assertions to validate correct properties (OrgnlInstrId vs OrgnlEndToEndId) according to generated code structure.
+
 ### Changed
 - Move: The file `pain_001_001_04.cs` was moved from `Payments/Pain/Generated` to `Payments/Pain/Pain00100104`.
 - Refactor: Updated all references and `using` statements to use the new namespace `Iso20022Library.Messages.Payments.Pain.Pain00100104` in both the builder and test files.

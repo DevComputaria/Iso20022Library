@@ -242,7 +242,7 @@ namespace Iso20022Library.Tests.Builders
             // Assert
             Assert.AreNotSame(_builder, clonedBuilder);
             Assert.AreNotSame(originalDocument, clonedDocument);
-            Assert.AreEqual(originalDocument.CstmrPmtStsRpt.OrgnlPmtInfAndSts.Count, 
+            Assert.AreEqual(originalDocument.CstmrPmtStsRpt.OrgnlPmtInfAndSts.Count,
                            clonedDocument.CstmrPmtStsRpt.OrgnlPmtInfAndSts.Count);
         }
 
