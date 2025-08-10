@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 ### Added
+- **Pain.001.001.07 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.07 (Customer Credit Transfer Initiation V07)
+  - Implemented `Pain00100107Builder` following established builder pattern with fluent API
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00100107`
+  - Comprehensive unit tests with 25 test cases covering all builder functionality
+  - Support for group headers, payment instructions, credit transfer transactions, authorization, remittance information, and supplementary data
+  - Full validation and XML serialization capabilities using existing Pain.001.001.07 message classes
+  - Compatible with existing infrastructure and follows established coding standards
 - **Pain.001.001.06 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.06 (Customer Credit Transfer Initiation V06)
   - Created XSD schema file for Pain.001.001.06 validation
   - Generated C# message classes from XSD using XmlSchemaClassGenerator  

@@ -55,10 +55,10 @@ namespace Iso20022Library.Application.Builders.Pain
         /// <returns>The current builder instance for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when required parameters are null or empty.</exception>
         public Pain00100106Builder WithGroupHeader(
-            string messageId, 
-            DateTime creationDateTime, 
-            string numberOfTransactions, 
-            PartyIdentification43 initiatingParty, 
+            string messageId,
+            DateTime creationDateTime,
+            string numberOfTransactions,
+            PartyIdentification43 initiatingParty,
             decimal? controlSum = null)
         {
             ValidateParameter(messageId, nameof(messageId));
@@ -92,7 +92,7 @@ namespace Iso20022Library.Application.Builders.Pain
         public Pain00100106Builder AddAuthorization(Authorisation1Choice authorization)
         {
             ValidateParameter(authorization, nameof(authorization));
-            
+
             if (_document.CstmrCdtTrfInitn.GrpHdr == null)
                 _document.CstmrCdtTrfInitn.GrpHdr = new GroupHeader48();
 
@@ -109,7 +109,7 @@ namespace Iso20022Library.Application.Builders.Pain
         public Pain00100106Builder WithForwardingAgent(BranchAndFinancialInstitutionIdentification5 forwardingAgent)
         {
             ValidateParameter(forwardingAgent, nameof(forwardingAgent));
-            
+
             if (_document.CstmrCdtTrfInitn.GrpHdr == null)
                 _document.CstmrCdtTrfInitn.GrpHdr = new GroupHeader48();
 
@@ -213,7 +213,7 @@ namespace Iso20022Library.Application.Builders.Pain
         public Pain00100106Builder SetPaymentTypeInformation(PaymentTypeInformation19 paymentTypeInformation)
         {
             ValidateParameter(paymentTypeInformation, nameof(paymentTypeInformation));
-            
+
             if (_document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 throw new InvalidOperationException("Cannot set payment type information without a payment instruction. Add a payment instruction first.");
 
@@ -233,7 +233,7 @@ namespace Iso20022Library.Application.Builders.Pain
         public Pain00100106Builder AddCreditTransferTransaction(CreditTransferTransaction20 creditTransfer)
         {
             ValidateParameter(creditTransfer, nameof(creditTransfer));
-            
+
             if (_document.CstmrCdtTrfInitn.PmtInf == null || _document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 throw new InvalidOperationException("Cannot add a credit transfer transaction without a payment instruction. Add a payment instruction first.");
 
@@ -264,7 +264,7 @@ namespace Iso20022Library.Application.Builders.Pain
             ValidateParameter(amount, nameof(amount));
             ValidateParameter(creditor, nameof(creditor));
             ValidateParameter(creditorAccount, nameof(creditorAccount));
-            
+
             if (_document.CstmrCdtTrfInitn.PmtInf == null || _document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 throw new InvalidOperationException("Cannot add a credit transfer transaction without a payment instruction. Add a payment instruction first.");
 
@@ -295,7 +295,7 @@ namespace Iso20022Library.Application.Builders.Pain
         public Pain00100106Builder SetCreditorAgent(BranchAndFinancialInstitutionIdentification5 creditorAgent)
         {
             ValidateParameter(creditorAgent, nameof(creditorAgent));
-            
+
             if (_document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 throw new InvalidOperationException("Cannot set creditor agent without a payment instruction. Add a payment instruction first.");
 
@@ -319,7 +319,7 @@ namespace Iso20022Library.Application.Builders.Pain
         public Pain00100106Builder SetRemittanceInformation(RemittanceInformation10 remittanceInformation)
         {
             ValidateParameter(remittanceInformation, nameof(remittanceInformation));
-            
+
             if (_document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 throw new InvalidOperationException("Cannot set remittance information without a payment instruction. Add a payment instruction first.");
 
@@ -343,7 +343,7 @@ namespace Iso20022Library.Application.Builders.Pain
         public Pain00100106Builder AddUnstructuredRemittance(string unstructuredRemittance)
         {
             ValidateParameter(unstructuredRemittance, nameof(unstructuredRemittance));
-            
+
             if (_document.CstmrCdtTrfInitn.PmtInf.Count == 0)
                 throw new InvalidOperationException("Cannot add remittance information without a payment instruction. Add a payment instruction first.");
 
@@ -352,7 +352,7 @@ namespace Iso20022Library.Application.Builders.Pain
                 throw new InvalidOperationException("Cannot add remittance information without a credit transfer transaction. Add a transaction first.");
 
             var lastTransaction = lastPaymentInstruction.CdtTrfTxInf[lastPaymentInstruction.CdtTrfTxInf.Count - 1];
-            
+
             if (lastTransaction.RmtInf == null)
                 lastTransaction.RmtInf = new RemittanceInformation10();
 
@@ -526,7 +526,7 @@ namespace Iso20022Library.Application.Builders.Pain
         public Pain00100106Builder Clone()
         {
             var clonedBuilder = new Pain00100106Builder();
-            
+
             if (_document.CstmrCdtTrfInitn.GrpHdr != null)
             {
                 clonedBuilder._document.CstmrCdtTrfInitn.GrpHdr = _document.CstmrCdtTrfInitn.GrpHdr;
