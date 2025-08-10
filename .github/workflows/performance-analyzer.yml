@@ -1,0 +1,91 @@
+name: Build e Performance Analysis
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  analyze-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      DOTNET_TieredPGO: 0
+      DOTNET_HOTLOOPCOUNT: 0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache NuGet global-packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-cache-${{ hashFiles('**/*.csproj','**/*.sln') }}
+          restore-keys: nuget-cache-
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup .NET 6 runtime (para ferramentas compatíveis)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+          package-type: runtime
+
+      - name: Restore dependencies
+        run: dotnet restore HEZKCredentialLib.sln
+
+      - name: Create artifacts directory
+        run: mkdir -p artifacts
+
+      - name: Build com análise de performance + segurança
+        id: msbuild
+        run: |
+          dotnet msbuild HEZKCredentialLib.sln \
+            /t:Rebuild /p:Configuration=Release \
+            /maxcpucount /graphBuild:true /nodeReuse:false /noAutoResponse \
+            /consoleLoggerParameters:"PerformanceSummary;ShowCommandLine" \
+            /detailedSummary /bl:artifacts/build-${{ github.run_id }}.binlog \
+            /profileEvaluation:artifacts/profile-eval.md \
+            /warnAsError \
+            /p:RunCodeAnalysis=true \
+            /p:TreatWarningsAsErrors=true \
+            /p:EnableNETAnalyzers=true \
+            /p:AnalysisMode=AllEnabledByDefault \
+            /p:AnalysisLevel=8.0
+        continue-on-error: true
+
+      - name: Install Binlogtool (global tool)
+        run: dotnet tool install --global binlogtool --version 1.0.27
+        continue-on-error: true
+
+      - name: Install Meziantou.MSBuild.Tools (global tool)
+        run: dotnet tool install --global Meziantou.MSBuild.Tools
+        continue-on-error: true
+
+      - name: Add dotnet tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Detect Double‑Writes in binlog
+        run: |
+          Meziantou.MSBuild.Tools detect-double-writes --path artifacts/build-${{ github.run_id }}.binlog
+        continue-on-error: true
+
+      - name: Analyze binlog for tasks and warnings (JSON report)
+        run: |
+          binlogtool analyze artifacts/build-${{ github.run_id }}.binlog --format json > artifacts/binlog-report.json
+        continue-on-error: true
+
+      - name: Upload artifacts (logs, binlog, reports)
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: artifacts/
+
+      - name: Summary Log
+        run: |
+          echo "Artifacts disponíveis: build.binlog, profile-eval.md, binlog-report.json."
+          echo "Use o MSBuild Structured Log Viewer local para inspeção detalhada."
