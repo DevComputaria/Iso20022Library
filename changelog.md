@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 ### Added
+- **Pain.001.001.10 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.10 (Customer Credit Transfer Initiation V10)
+  - Implemented `Pain00100110Builder` following established builder pattern with fluent API
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00100110`
+  - Comprehensive unit tests with 19 test cases covering all builder functionality including factory registration, group headers, XML serialization, and error handling
+  - Support for group headers, payment instructions, and credit transfer transactions using V10-specific types
+  - Enhanced features compared to V09 including improved instruction handling with `InstructionForDebtorAgent1` support
+  - Uses V10 schema types: `CustomerCreditTransferInitiationV10`, `GroupHeader95`, `PaymentInstruction34`, `CreditTransferTransaction40`
+  - Updated instruction types: `InstructionForCreditorAgent3` (enhanced from V09's `InstructionForCreditorAgent1`)
+  - Full validation and XML serialization capabilities using existing Pain.001.001.10 message classes
+  - Compatible with existing infrastructure and follows established coding standards
 - **Pain.001.001.09 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.09 (Customer Credit Transfer Initiation V09)
   - Implemented `Pain00100109Builder` following established builder pattern with fluent API
   - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00100109`
