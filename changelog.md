@@ -1,6 +1,14 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- **Pain.001.001.03 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.03 (Customer Credit Transfer Initiation V03)
+  - Created XSD schema file for Pain.001.001.03 validation
+  - Generated C# message classes from XSD using XmlSchemaClassGenerator
+  - Implemented `Pain00100103Builder` following established builder pattern with fluent API
+  - Added builder registration in `MessageBuilderFactory`
+  - Comprehensive unit tests covering all builder functionality
+  - Support for group headers, payment instructions, credit transfer transactions, and authorization
 ### Fixed
 - **Cross-platform test compatibility**: Enhanced test infrastructure to resolve XSD file paths dynamically using cross-platform compatible `GetXsdPath` helper method, eliminating hardcoded Windows-specific paths that were causing failures in GitHub Actions Linux environment.
 - **Security scan configuration**: Fixed security scan tool compatibility by adding .NET 6.0 runtime support and correcting command-line arguments.
