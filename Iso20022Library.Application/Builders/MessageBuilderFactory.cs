@@ -26,20 +26,21 @@ public class MessageBuilderFactory
     /// corresponding builder instances. Each builder must implement the <see cref="IMessageBuilder"/> interface.
     /// The dictionary is initialized with all supported message types at construction time.
     /// </remarks>
-    private readonly Dictionary<MessageType, IMessageBuilder> _builders = new()
+    private readonly Dictionary<MessageType, Func<IMessageBuilder>> _builders = new()
     {
-        { MessageType.Pain00100102, new Pain.Pain00100102Builder() },
-        { MessageType.Pain00100103, new Pain.Pain00100103Builder() },
-        { MessageType.Pain00100104, new Pain00100104Builder() },
-        { MessageType.Pain00100106, new Pain00100106Builder() },
-        { MessageType.Pain00100107, new Pain00100107Builder() },
-        { MessageType.Pain00100108, new Pain00100108Builder() },
-        { MessageType.Pain00200104, new Pain.Pain00200104Builder() },
-        { MessageType.Pain00200106, new Pain.Pain00200106Builder() },
-        { MessageType.Pain00200107, new Pain.Pain00200107Builder() },
-        { MessageType.Pain00200108, new Pain.Pain00200108Builder() },
-        { MessageType.Pain00200109, new Pain.Pain00200109Builder() },
-        { MessageType.Pain00200110, new Pain.Pain00200110Builder() }
+        { MessageType.Pain00100102, () => new Pain.Pain00100102Builder() },
+        { MessageType.Pain00100103, () => new Pain.Pain00100103Builder() },
+        { MessageType.Pain00100104, () => new Pain00100104Builder() },
+        { MessageType.Pain00100106, () => new Pain00100106Builder() },
+        { MessageType.Pain00100107, () => new Pain00100107Builder() },
+        { MessageType.Pain00100108, () => new Pain00100108Builder() },
+        { MessageType.Pain00100109, () => new Pain00100109Builder() },
+        { MessageType.Pain00200104, () => new Pain.Pain00200104Builder() },
+        { MessageType.Pain00200106, () => new Pain.Pain00200106Builder() },
+        { MessageType.Pain00200107, () => new Pain.Pain00200107Builder() },
+        { MessageType.Pain00200108, () => new Pain.Pain00200108Builder() },
+        { MessageType.Pain00200109, () => new Pain.Pain00200109Builder() },
+        { MessageType.Pain00200110, () => new Pain.Pain00200110Builder() }
     };
 
     /// <summary>
@@ -62,8 +63,8 @@ public class MessageBuilderFactory
     /// </remarks>
     public IMessageBuilder GetBuilder(MessageType type)
     {
-        if (_builders.TryGetValue(type, out var builder))
-            return builder;
+        if (_builders.TryGetValue(type, out var builderFactory))
+            return builderFactory();
 
         throw new NotSupportedException($"Message type {type} not supported.");
     }

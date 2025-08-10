@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 ### Added
+- **Pain.001.001.09 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.09 (Customer Credit Transfer Initiation V09)
+  - Implemented `Pain00100109Builder` following established builder pattern with fluent API
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00100109`
+  - Comprehensive unit tests with 9 test cases covering all builder functionality including factory registration, group headers, XML serialization, and error handling
+  - Support for group headers, payment instructions, and credit transfer transactions using V09-specific types
+  - Uses `DateAndDateTime2Choice` for payment execution dates as required by V09 specification
+  - Correct usage of V09 schema types: `AccountIdentification4Choice` with `Iban` property, `FinancialInstitutionIdentification18` with `Bicfi` property, `AmountType4Choice` with `InstdAmt` property, and `PaymentMethod3Code.Trf` enum value
+  - Full validation and XML serialization capabilities using existing Pain.001.001.09 message classes
+  - Compatible with existing infrastructure and follows established coding standards
 - **Pain.001.001.08 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.08 (Customer Credit Transfer Initiation V08)
   - Fixed existing `Pain00100108Builder` implementation to correctly handle Pain.001.001.08 specific types
   - Updated payment instruction date handling to use `DateAndDateTimeChoice` type as required by V08
