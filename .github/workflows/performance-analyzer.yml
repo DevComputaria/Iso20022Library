@@ -58,25 +58,42 @@ jobs:
             /p:AnalysisLevel=8.0
         continue-on-error: true
 
-      - name: Install Binlogtool (global tool)
-        run: dotnet tool install --global binlogtool --version 1.0.27
+      - name: Install MSBuild Structured Log Viewer CLI
+        run: dotnet tool install --global MSBuild.StructuredLogger --version 2.2.206
         continue-on-error: true
 
       - name: Install Meziantou.MSBuild.Tools (global tool)
-        run: dotnet tool install --global Meziantou.MSBuild.Tools
+        run: dotnet tool install --global Meziantou.MSBuild.Tools --version 1.0.27
         continue-on-error: true
 
       - name: Add dotnet tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Detect Double‑Writes in binlog
+      - name: Detect Double‑Writes in binlog (with fallback)
         run: |
-          Meziantou.MSBuild.Tools detect-double-writes --path artifacts/build-${{ github.run_id }}.binlog
+          if command -v Meziantou.MSBuild.Tools &> /dev/null; then
+            echo "Attempting to detect double-writes with Meziantou.MSBuild.Tools..."
+            Meziantou.MSBuild.Tools detect-double-writes --path artifacts/build-${{ github.run_id }}.binlog || echo "Meziantou.MSBuild.Tools failed - tool may not support this binlog version"
+          else
+            echo "Meziantou.MSBuild.Tools not available, skipping double-write detection"
+          fi
         continue-on-error: true
 
-      - name: Analyze binlog for tasks and warnings (JSON report)
+      - name: Analyze binlog with MSBuild Structured Logger
         run: |
-          binlogtool analyze artifacts/build-${{ github.run_id }}.binlog --format json > artifacts/binlog-report.json
+          if command -v StructuredLogViewer &> /dev/null; then
+            echo "Analyzing binlog with MSBuild Structured Logger..."
+            StructuredLogViewer artifacts/build-${{ github.run_id }}.binlog --verbosity detailed > artifacts/binlog-analysis.txt || echo "StructuredLogViewer analysis failed"
+          else
+            echo "StructuredLogViewer not available"
+          fi
+        continue-on-error: true
+
+      - name: Basic binlog inspection
+        run: |
+          echo "Basic binlog file information:"
+          ls -la artifacts/build-${{ github.run_id }}.binlog
+          file artifacts/build-${{ github.run_id }}.binlog || echo "file command not available"
         continue-on-error: true
 
       - name: Upload artifacts (logs, binlog, reports)
@@ -87,5 +104,13 @@ jobs:
 
       - name: Summary Log
         run: |
-          echo "Artifacts disponíveis: build.binlog, profile-eval.md, binlog-report.json."
-          echo "Use o MSBuild Structured Log Viewer local para inspeção detalhada."
+          echo "Artifacts disponíveis:"
+          echo "- build-${{ github.run_id }}.binlog (MSBuild binary log)"
+          echo "- profile-eval.md (MSBuild evaluation profile)"
+          echo "- binlog-analysis.txt (Structured log analysis, se disponível)"
+          echo ""
+          echo "Para análise detalhada local:"
+          echo "- Use o MSBuild Structured Log Viewer (https://msbuildlog.com/)"
+          echo "- Ou execute: dotnet tool install -g MSBuild.StructuredLogger"
+          echo ""
+          ls -la artifacts/ || echo "Erro ao listar artifacts"
