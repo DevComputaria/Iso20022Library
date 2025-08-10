@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 ### Added
+- **Pain.001.001.08 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.08 (Customer Credit Transfer Initiation V08)
+  - Fixed existing `Pain00100108Builder` implementation to correctly handle Pain.001.001.08 specific types
+  - Updated payment instruction date handling to use `DateAndDateTimeChoice` type as required by V08
+  - Removed invalid methods that don't exist in Pain.001.001.08 specification (InstructionForNextAgent)
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00100108`
+  - Supports all standard V08 features including group headers, payment instructions, credit transfer transactions, intermediary agents, remittance information, and supplementary data
+  - Full validation and XML serialization capabilities using existing Pain.001.001.08 message classes
+  - Compatible with existing infrastructure and follows established coding standards
 - **Pain.001.001.07 Builder Support**: Implemented complete builder for ISO 20022 message Pain.001.001.07 (Customer Credit Transfer Initiation V07)
   - Implemented `Pain00100107Builder` following established builder pattern with fluent API
   - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00100107`
