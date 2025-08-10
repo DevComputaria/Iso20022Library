@@ -36,7 +36,7 @@ jobs:
           package-type: runtime
 
       - name: Restore dependencies
-        run: dotnet restore HEZKCredentialLib.sln
+        run: dotnet restore Iso20022Library.sln
 
       - name: Create artifacts directory
         run: mkdir -p artifacts
@@ -44,7 +44,7 @@ jobs:
       - name: Build com análise de performance + segurança
         id: msbuild
         run: |
-          dotnet msbuild HEZKCredentialLib.sln \
+          dotnet msbuild Iso20022Library.sln \
             /t:Rebuild /p:Configuration=Release \
             /maxcpucount /graphBuild:true /nodeReuse:false /noAutoResponse \
             /consoleLoggerParameters:"PerformanceSummary;ShowCommandLine" \
