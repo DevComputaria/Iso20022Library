@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 ### Added
+- **Pain.007.001.06 Builder Support**: Implemented complete builder for ISO 20022 message Pain.007.001.06 (Customer Payment Reversal V06)
+  - Implemented `Pain00700106Builder` following established builder pattern with fluent API
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00700106`
+  - Comprehensive unit tests with 42 test cases covering all builder functionality including factory registration, group headers, XML serialization, and error handling
+  - Support for payment reversal scenarios including original group information, payment instruction reversals, and transaction-level reversals
+  - Specialized reversal methods: `SetOriginalGroupInformation()`, `AddOriginalPaymentInstruction()`, `AddPaymentTransactionReversal()`
+  - Helper methods for creating reversal reasons, statuses, and identification codes specific to payment reversals
+  - Uses V06 schema types: `CustomerPaymentReversalV06`, `GroupHeader56`, `OriginalPaymentInstruction16`, `PaymentTransaction64`
+  - Full validation ensuring Pain.007 message requirements (original group information + payment instructions)
+  - XML generation and serialization capabilities using existing Pain.007.001.06 message classes
+  - Compatible with existing infrastructure and follows established coding standards
 - **Pain.007.001.05 Builder Support**: Implemented complete builder for ISO 20022 message Pain.007.001.05 (Customer Payment Reversal V05)
   - Implemented `Pain00700105Builder` following established builder pattern with fluent API
   - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00700105`
