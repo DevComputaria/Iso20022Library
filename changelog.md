@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 ### Added
+- **Pain.007.001.09 Builder Support**: Implemented complete builder for ISO 20022 message Pain.007.001.09 (Customer Payment Reversal V09)
+  - Implemented `Pain00700109Builder` following established builder pattern with fluent API
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00700109`
+  - Comprehensive unit tests with 55 test cases covering all builder functionality including factory registration, group headers, XML serialization, and error handling
+  - Support for payment reversal scenarios including original group information, payment instruction reversals, and transaction-level reversals
+  - Specialized reversal methods: `SetOriginalGroupInformation()`, `AddOriginalPaymentInstruction()`, `AddPaymentTransactionReversal()`
+  - Helper methods for creating reversal reasons, statuses, and identification codes specific to payment reversals
+  - Uses V09 schema types: `CustomerPaymentReversalV09`, `GroupHeader88`, `OriginalGroupHeader16`, `OriginalPaymentInstruction33`, `PaymentTransaction108`
+  - V09-specific type mapping: `PaymentReversalReason9`, `OriginalTransactionReference28`, `PartyIdentification135` with updated property names
+  - Party identification using `Party38Choice` structure for organization and private identification
+  - Organization identification with `OrganisationIdentification29` using `AnyBic`/`Lei` properties (updated from V08 `AnyBIC`/`LEI`)
+  - Enhanced date handling with `DateAndDateTime2Choice` for execution dates with `Dt`/`DtSpecified` pattern
+  - Full validation ensuring Pain.007 message requirements (original group information + payment instructions)
+  - XML generation and serialization capabilities using existing Pain.007.001.09 message classes
+  - Compatible with existing infrastructure and follows established coding standards
 - **Pain.007.001.08 Builder Support**: Implemented complete builder for ISO 20022 message Pain.007.001.08 (Customer Payment Reversal V08)
   - Implemented `Pain00700108Builder` following established builder pattern with fluent API
   - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00700108`
