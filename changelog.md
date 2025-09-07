@@ -2,6 +2,37 @@
 
 ## [Unreleased]
 ### Added
+- **PACS.002.001.11 Builder Support**: Implemented complete builder for ISO 20022 message PACS.002.001.11 (FI To FI Payment Status Report V11)
+  - Implemented `Pacs00200111Builder` following established builder pattern with fluent API
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pacs00200111`
+  - Support for comprehensive payment status reporting scenarios including group headers, original group information arrays, transaction status arrays, and supplementary data
+  - Specialized status reporting methods: `SetOriginalGroupInformation()`, `AddOriginalGroupInformation()`, `AddTransactionInformationAndStatus()`
+  - Helper methods for creating status information, transaction details, and status codes specific to payment status reports
+  - Uses V11 schema types: `FIToFIPaymentStatusReportV11`, `GroupHeader91`, `OriginalGroupHeader17[]`, `PaymentTransaction123[]`
+  - V11-specific type mapping with array-based collections instead of Lists for generated classes compatibility
+  - Status fields using string types instead of enum types: `GrpSts`, `TxSts`, `DtldSts` for flexible status reporting
+  - Array management with efficient conversion patterns using `ToList().ToArray()` for seamless collection handling
+  - Supplementary data support using `SupplementaryData1` with `System.Xml.XmlElement` envelope for flexible data extension
+  - Type compatibility adaptations for XSD-generated classes including removal of non-existent `Specified` properties
+  - Full validation ensuring PACS.002 message requirements and proper status report structure
+  - XML generation and serialization capabilities using existing PACS.002.001.11 message classes
+  - Compatible with existing infrastructure and follows established coding standards
+
+### Testing
+- **PACS.002.001.11 Builder Test Suite**: Created comprehensive unit test coverage for PACS.002.001.11 builder
+  - Implemented `Pacs00200111BuilderTests.cs` with 29 test methods covering all builder functionality
+  - Constructor and initialization tests verifying proper class instantiation and default values
+  - Group header validation tests ensuring required header information and MessageId uniqueness
+  - Original group information testing for single and multiple entries with array-based collections
+  - Transaction status testing with comprehensive validation of transaction details and status codes
+  - Complex scenario testing combining group information and transaction data
+  - XML generation validation ensuring proper message structure and serialization
+  - Factory integration tests in `MessageBuilderFactoryPacs00200111Tests.cs` with 3 test methods
+  - Error handling and validation tests for null parameters and invalid data
+  - Builder state verification including fluent API functionality and method chaining
+  - Type compatibility testing for XSD-generated classes with array collections and string status fields
+  - All 32 tests passing successfully with 100% coverage of builder functionality
+
 - **XSD Code Generator Tool**: Implemented comprehensive tool for automated generation of ISO 20022 message classes from XSD files
   - Created `Tools/XsdCodeGenerator` console application using .NET 8.0 for automated class generation
   - Integrated Microsoft's xsd.exe tool with automatic path discovery across multiple .NET Framework SDK versions
