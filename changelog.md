@@ -18,6 +18,21 @@
   - XML generation and serialization capabilities using existing PACS.002.001.11 message classes
   - Compatible with existing infrastructure and follows established coding standards
 
+- **PACS.003.001.08 Builder Support**: Implemented complete builder for ISO 20022 message PACS.003.001.08 (FI To FI Customer Direct Debit V08)
+  - Implemented `Pacs00300108Builder` following established builder pattern with fluent API
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pacs00300108`
+  - Support for comprehensive direct debit processing scenarios including group headers, direct debit transaction arrays, and supplementary data
+  - Specialized direct debit methods: `WithGroupHeader()`, `AddDirectDebitTransaction()`, `AddSupplementaryData()`
+  - Helper methods for creating payment identification, direct debit transactions, active amounts, party identification, and cash accounts
+  - Uses V08 schema types: `FIToFICustomerDirectDebitV08`, `GroupHeader94`, `DirectDebitTransactionInformation24[]`
+  - V08-specific type mapping with array-based collections for generated classes compatibility
+  - Direct debit transaction support with mandate information, creditor/debtor details, and settlement instructions
+  - Array management with efficient conversion patterns using `ToList().ToArray()` for seamless collection handling
+  - Supplementary data support using `SupplementaryData1` with `System.Xml.XmlElement` envelope for flexible data extension
+  - Full validation ensuring PACS.003 message requirements and proper direct debit structure
+  - XML generation and serialization capabilities using existing PACS.003.001.08 message classes
+  - Compatible with existing infrastructure and follows established coding standards
+
 ### Testing
 - **PACS.002.001.11 Builder Test Suite**: Created comprehensive unit test coverage for PACS.002.001.11 builder
   - Implemented `Pacs00200111BuilderTests.cs` with 29 test methods covering all builder functionality
@@ -32,6 +47,14 @@
   - Builder state verification including fluent API functionality and method chaining
   - Type compatibility testing for XSD-generated classes with array collections and string status fields
   - All 32 tests passing successfully with 100% coverage of builder functionality
+
+- **PACS.003.001.08 Builder Test Suite**: Created comprehensive integration test coverage for PACS.003.001.08 builder
+  - Implemented `Pacs00300108BuilderIntegrationTests.cs` with 4 test methods covering core builder functionality
+  - Factory integration tests ensuring proper builder registration and instantiation
+  - Basic message construction tests with group header and direct debit transaction validation
+  - Required field validation tests ensuring proper error handling for missing data
+  - Transaction counting tests verifying proper management of direct debit transaction arrays
+  - All 4 tests passing successfully validating builder functionality and integration with factory pattern
 
 - **XSD Code Generator Tool**: Implemented comprehensive tool for automated generation of ISO 20022 message classes from XSD files
   - Created `Tools/XsdCodeGenerator` console application using .NET 8.0 for automated class generation
