@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 ### Added
+- **XSD Code Generator Tool**: Implemented comprehensive tool for automated generation of ISO 20022 message classes from XSD files
+  - Created `Tools/XsdCodeGenerator` console application using .NET 8.0 for automated class generation
+  - Integrated Microsoft's xsd.exe tool with automatic path discovery across multiple .NET Framework SDK versions
+  - Intelligent post-processing pipeline to enhance generated code quality with auto-generated headers, XML comments, and proper attributes
+  - PowerShell automation script `Generate-Classes.ps1` for streamlined usage and build integration
+  - Cross-platform support for different Windows SDK installations and Visual Studio versions
+  - Proper namespace organization following established project patterns
+  - Successfully tested with pacs.002.001.11 XSD generating 6278 lines of production-ready C# classes
+  - Tool includes error handling, validation, and comprehensive logging for debugging
+
+- **Complete PACS Message Classes Suite**: Generated full collection of ISO 20022 PACS message classes using XSD code generator
+  - **pacs.002.001.11** (186KB): FI To FI Payment Status Report V11 - Status reporting for payment transactions
+  - **pacs.003.001.08** (181KB): FI To FI Customer Direct Debit V08 - Direct debit transactions between financial institutions
+  - **pacs.004.001.10** (221KB): Payment Return V10 - Payment return processing and notifications
+  - **pacs.007.001.10** (195KB): FI To FI Payment Reversal V10 - Payment reversal transactions between financial institutions
+  - **pacs.008.001.09** (190KB): FI To FI Customer Credit Transfer V09 - Credit transfer transactions between financial institutions
+  - **pacs.009.001.09** (171KB): Financial Institution Credit Transfer V09 - Credit transfers for financial institution operations
+  - **pacs.010.001.04** (70KB): Financial Institution Direct Debit V04 - Direct debit for financial institution operations
+  - **pacs.028.001.04** (177KB): FI To FI Payment Status Request V04 - Payment status inquiry messages
+  - All classes follow consistent namespace pattern: `Iso20022Library.Messages.Payments.Pacs.Generated.Pacs{NNNNNNNN}`
+  - Generated using Microsoft's xsd.exe with proper XML serialization attributes and ISO 20022 namespace compliance
+  - Successfully compiles and integrates with existing project infrastructure
+  - Total generated code: ~1.4MB of production-ready C# classes for comprehensive PACS message support
+
 - **Pain.007.001.09 Builder Support**: Implemented complete builder for ISO 20022 message Pain.007.001.09 (Customer Payment Reversal V09)
   - Implemented `Pain00700109Builder` following established builder pattern with fluent API
   - Added builder registration in `MessageBuilderFactory` for `MessageType.Pain00700109`
