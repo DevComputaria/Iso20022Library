@@ -1,4 +1,5 @@
 using Iso20022Library.Application.Builders.Pain;
+using Iso20022Library.Application.Builders.Pacs;
 using Iso20022Library.Domain.Common.Enums;
 using Iso20022Library.Domain.Common.Interfaces;
 
@@ -51,7 +52,8 @@ public class MessageBuilderFactory
         { MessageType.Pacs00200111, () => new Pacs.Pacs00200111Builder() },
         { MessageType.Pacs00300108, () => new Pacs.Pacs00300108Builder() },
         { MessageType.Pacs00400110, () => new Pacs.Pacs00400110Builder() },
-        { MessageType.Pacs00700110, () => new Pacs.Pacs00700110Builder() }
+        { MessageType.Pacs00700110, () => new Pacs.Pacs00700110Builder() },
+        { MessageType.Pacs00800109, () => new Pacs00800109Builder() }
     };
 
     /// <summary>

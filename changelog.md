@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 ### Added
+- **PACS.008.001.09 Builder Support**: Implemented complete builder for ISO 20022 message PACS.008.001.09 (FI To FI Customer Credit Transfer V09)
+  - Implemented `Pacs00800109Builder` following established builder pattern with fluent API and IMessageBuilder interface
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pacs00800109`
+  - Support for comprehensive customer credit transfer scenarios including group headers, payment type information, and credit transfer transactions
+  - Specialized credit transfer methods: `WithMessageId()`, `WithCreationDateTime()`, `WithControlSum()`, `WithTotalInterbankSettlementAmount()`, `WithInterbankSettlementDate()`
+  - Financial institution support: `WithInstructingAgent()`, `WithInstructedAgent()` for group header configuration
+  - Payment type information configuration: `WithPaymentTypeInformation()` with priority, service level, and category purpose
+  - Nested transaction builder: `AddCreditTransferTransaction()` returning `CreditTransferTransactionBuilder` for fluent transaction building
+  - Credit transfer transaction support with payment identification, settlement amounts, dates, priorities, and party information
+  - Comprehensive party information: debtor/creditor details with names, countries, accounts (IBAN), and agents (BIC)
+  - Remittance information support: `WithRemittanceInformation()` for unstructured payment details
+  - Charge bearer and purpose code configuration: `WithChargeBearer()`, `WithPurpose()`
+  - Uses V09 schema types: `FIToFICustomerCreditTransferV09`, `GroupHeader93`, `CreditTransferTransaction43[]`
+  - V09-specific type mapping with proper handling of PACS.008.001.09 generated classes structure including `ActiveCurrencyAndAmount`, `PartyIdentification135`, `CashAccount38`
+  - Multiple transaction support with automatic transaction count updates in group header
+  - Array management with efficient conversion patterns using `ToList().ToArray()` for seamless collection handling
+  - Full validation ensuring PACS.008 message requirements: message ID, instructing/instructed agents, transaction details, party information
+  - XML generation and serialization capabilities using XmlSerializationService static methods
+  - Compatible with existing infrastructure and follows established coding standards
+  - Comprehensive test suite with 38 unit tests covering all functionality including group headers, credit transfer transactions, validation, XML generation, error handling, and complex scenarios
+  - Full factory integration validating builder creation and type compatibility
+  - Support for nullable reference types and proper error handling with meaningful exception messages
+
 - **PACS.007.001.10 Builder Support**: Implemented complete builder for ISO 20022 message PACS.007.001.10 (Payment Reversal V10)
   - Implemented `Pacs00700110Builder` following established builder pattern with fluent API and IMessageBuilder interface
   - Added builder registration in `MessageBuilderFactory` for `MessageType.Pacs00700110`
