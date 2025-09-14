@@ -53,7 +53,8 @@ public class MessageBuilderFactory
         { MessageType.Pacs00300108, () => new Pacs.Pacs00300108Builder() },
         { MessageType.Pacs00400110, () => new Pacs.Pacs00400110Builder() },
         { MessageType.Pacs00700110, () => new Pacs.Pacs00700110Builder() },
-        { MessageType.Pacs00800109, () => new Pacs00800109Builder() }
+        { MessageType.Pacs00800109, () => new Pacs00800109Builder() },
+        { MessageType.Pacs00900109, () => new Pacs00900109Builder() }
     };
 
     /// <summary>

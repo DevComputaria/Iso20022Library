@@ -29,5 +29,6 @@ public enum MessageType
     Pacs00300108,
     Pacs00400110,
     Pacs00700110,
-    Pacs00800109
+    Pacs00800109,
+    Pacs00900109
 }

@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 ### Added
+- **PACS.009.001.09 Builder Support - COMPLETED ✅**: Implemented complete builder for ISO 20022 message PACS.009.001.09 (Financial Institution Credit Transfer V09)
+  - **Status**: FULLY IMPLEMENTED, TESTED, AND VALIDATED ✅
+  - **Integration Test**: CompleteWorkflow_BuilderAndXmlGeneration_Success - PASSED (1,558 chars XML output) ✅
+  - Implemented `Pacs00900109Builder` following established builder pattern with fluent API and IMessageBuilder interface
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pacs00900109`
+  - Support for comprehensive financial institution credit transfer scenarios including group headers, payment information, and credit transfer transactions
+  - Specialized financial institution methods: `WithMessageId()`, `WithCreationDateTime()`, `WithBatchBooking()`, `WithNumberOfTransactions()`, `WithControlSum()`
+  - Financial institution configuration: `WithInstructingAgent()`, `WithInstructedAgent()` for group header setup
+  - Settlement information: `WithTotalInterbankSettlementAmount()`, `WithInterbankSettlementDate()`, `WithSettlementMethod()`
+  - Nested transaction builder: `AddCreditTransferTransaction()` returning `CreditTransferTransactionBuilder` for fluent transaction building
+  - Credit transfer transaction support with payment identification, settlement amounts, dates, priorities, and financial institution information
+  - Comprehensive financial institution party information: debtor/creditor institutions with BICs, names, and account information
+  - Payment type information configuration: `WithPaymentTypeInformation()` with instruction priority, service levels, local instruments, and category purpose
+  - Remittance information support: `WithRemittanceInformation()` for unstructured payment details
+  - Settlement priority and underlying customer transaction support: `WithSettlementPriority()`, `WithUnderlyingCustomerCreditTransfer()`
+  - Uses V09 schema types: `FinancialInstitutionCreditTransferV09`, `GroupHeader93`, `CreditTransferTransaction44[]`
+  - V09-specific type mapping with proper handling of PACS.009.001.09 generated classes structure including `ActiveCurrencyAndAmount`, `BranchAndFinancialInstitutionIdentification6`, `CashAccount38`
+  - Multiple transaction support with automatic transaction count updates in group header
+  - Array management with efficient conversion patterns using `ToList().ToArray()` for seamless collection handling
+  - Full validation ensuring PACS.009 message requirements: message ID, instructing/instructed agents, transaction details, financial institution information
+  - XML generation and serialization capabilities using XmlSerializationService static methods
+  - Compatible with existing infrastructure and follows established coding standards
+  - Supplementary data support using `SupplementaryData1` with `System.Xml.XmlElement` envelope for flexible data extension
+  - Support for nullable reference types and proper error handling with meaningful exception messages
+  - Factory integration validating builder creation and type compatibility
+
 - **PACS.008.001.09 Builder Support**: Implemented complete builder for ISO 20022 message PACS.008.001.09 (FI To FI Customer Credit Transfer V09)
   - Implemented `Pacs00800109Builder` following established builder pattern with fluent API and IMessageBuilder interface
   - Added builder registration in `MessageBuilderFactory` for `MessageType.Pacs00800109`
