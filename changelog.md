@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 ### Added
+- **PACS.007.001.10 Builder Support**: Implemented complete builder for ISO 20022 message PACS.007.001.10 (Payment Reversal V10)
+  - Implemented `Pacs00700110Builder` following established builder pattern with fluent API and IMessageBuilder interface
+  - Added builder registration in `MessageBuilderFactory` for `MessageType.Pacs00700110`
+  - Support for comprehensive payment reversal scenarios including group headers, original group information, reversal transactions, and supplementary data
+  - Specialized payment reversal methods: `WithGroupHeader()`, `WithOriginalGroupInformation()`, `AddReversalTransaction()`, `AddSupplementaryData()`
+  - Helper methods for creating reversal reason information, financial institution identification, and settlement information
+  - Uses V10 schema types: `FIToFIPaymentReversalV10`, `GroupHeader89`, `OriginalGroupHeader16`, `PaymentTransaction119[]`
+  - V10-specific type mapping with proper handling of PACS.007.001.10 generated classes structure
+  - Payment reversal transaction support with reversal identification, original transaction details, and reversal reason management
+  - Array management with efficient conversion patterns using `ToList().ToArray()` for seamless collection handling
+  - Supplementary data support using `SupplementaryData1` with `System.Xml.XmlElement` envelope for flexible data extension
+  - Full validation ensuring PACS.007 message requirements and proper payment reversal structure
+  - XML generation and serialization capabilities using XmlSerializationService static methods
+  - Compatible with existing infrastructure and follows established coding standards
+  - Comprehensive test suite with 23 unit tests covering all functionality including validation, XML generation, error handling, clone functionality, and fluent interface
+  - Full factory integration with 3 integration tests validating builder creation and type compatibility
+
 - **PACS.004.001.10 Builder Support**: Implemented complete builder for ISO 20022 message PACS.004.001.10 (Payment Return V10)
   - Implemented `Pacs00400110Builder` following established builder pattern with fluent API and IMessageBuilder interface
   - Added builder registration in `MessageBuilderFactory` for `MessageType.Pacs00400110`
