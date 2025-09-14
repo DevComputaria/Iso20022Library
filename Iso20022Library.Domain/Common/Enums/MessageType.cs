@@ -26,5 +26,6 @@ public enum MessageType
     Pain00700109,
     Pain00700110,
     Pacs00200111,
-    Pacs00300108
+    Pacs00300108,
+    Pacs00400110
 }
